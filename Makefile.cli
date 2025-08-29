@@ -1,0 +1,26 @@
+CXX := g++
+CXXFLAGS := -Wall -g -O2 -MMD -MP -std=c++23
+
+SRCS := $(shell find ./include -name "*.cpp") ./CppCliNeighborRequestor.cpp
+OBJS := $(patsubst ./%,build_cli/%,$(SRCS:.cpp=.o))
+DEPS := $(OBJS:.o=.d)
+
+TARGET := build_cli/cpp_cli_neighbor_requestor.out
+INCLUDES := $(shell find include -type d | sed 's/^/-I/')
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
+
+build_cli/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	rm -rf build_cli $(TARGET)
+
+run: $(TARGET)
+	./$(TARGET)
+
+-include $(DEPS)

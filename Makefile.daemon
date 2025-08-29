@@ -1,0 +1,26 @@
+CXX := g++
+CXXFLAGS := -Wall -g -O2 -MMD -MP -std=c++23
+
+SRCS := $(shell find ./include -name "*.cpp") ./CppNeighborDiscovery.cpp
+OBJS := $(patsubst ./%,build_daemon/%,$(SRCS:.cpp=.o))
+DEPS := $(OBJS:.o=.d)
+
+TARGET := build_daemon/cpp_neighbor_discovery.out
+INCLUDES := $(shell find include -type d | sed 's/^/-I/')
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
+
+build_daemon/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	rm -rf build_daemon $(TARGET)
+
+run: $(TARGET)
+	./$(TARGET)
+
+-include $(DEPS)
