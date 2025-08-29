@@ -16,8 +16,6 @@ using Processes::Process;
 
 int main() {
     auto logger = Logging::StdLogger::getInstance();
-
-    logger->info("Service started");
     
     //used for comm with other daemons over net
     DiscoverySettings netSettings;
@@ -38,6 +36,7 @@ int main() {
         Process::create(true, Config::ITERATION_PERIOD_SECONDS, Config::STD_REDIRECT_PATH, std::bind(&NetworkNeighborDiscoverer::runIteration, &discoverer));
 
     process.daemonize();
+    logger->info("Service started");
     process.run();
 
     return 0;
